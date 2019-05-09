@@ -18,7 +18,10 @@ bool MaterialManager::transformMaterial(){
         return retexture();
     }
     if(materialParams.makeMaterial == GLASS){
-        return makeGlass();
+        makeGlass();
+
+        std::cout << "make glass" << std::endl;
+        return true;
     }
     if(materialParams.makeMaterial == CAUSTIC){
         return makeCaustic();
@@ -314,13 +317,15 @@ bool MaterialManager::makeGlass(){
     std::vector<int> highlights = hist.findHighlights();
 
     std::vector<Vector3f> originalImage = im.toVector();
-    for (int i = 0; i < highlights.size(); i++) {
-        int index = highlights[i];
-        Vector3f originalVal = originalImage[index];
-        int gray = (int(originalVal[0]) + int(originalVal[1]) + int(originalVal[2]))/3;
-        retexturing[index] = Vector3f(gray, gray, gray);
-    }
+    std::cout << "after im to vector" << std::endl;
+//    for (int i = 0; i < highlights.size(); i++) {
+//        int index = highlights[i];
+//        Vector3f originalVal = originalImage[index];
+//        int gray = (int(originalVal[0]) + int(originalVal[1]) + int(originalVal[2]))/3;
+//        retexturing[index] = Vector3f(gray, gray, gray);
+//    }
     vectorToFile(retexturing, "images/output.png", rows, cols);
+    std::cout << "after vector to file" << std::endl;
 
     return true;
 }

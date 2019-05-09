@@ -6,9 +6,9 @@
 Histogram::Histogram(std::vector<float> luminances)
 {
     //m_histogram.reserve(m_size);
-    std::vector<int> tmp (m_size);
-    std::fill(tmp.begin(), tmp.end(), 0);
-    m_histogram = tmp;
+    for (int i = 0; i < m_size; i++) {
+        m_histogram.push_back(0);
+    }
 
     // Take the log of all the luminances and ignore negative values
     for (int i = 0; i < luminances.size(); i++) {
