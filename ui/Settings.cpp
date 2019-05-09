@@ -29,22 +29,22 @@ void Settings::loadSettingsOrDefaults() {
 
     // Brush
     transformationType = s.value("transformationType", TRANSFORMATION_BRDF).toInt();
-    diffuseColor.r = s.value("diffuseRed", 0).toInt();
-    diffuseColor.g = s.value("diffuseGreen", 0).toInt();
-    diffuseColor.b = s.value("diffuseBlue", 0).toInt();
+    diffuseColor.r = s.value("diffuseRed", 255).toInt();
+    diffuseColor.g = s.value("diffuseGreen", 255).toInt();
+    diffuseColor.b = s.value("diffuseBlue", 255).toInt();
     diffuseColor.a = s.value("diffuseAlpha", 1).toInt();
 
-    specularColor.r = s.value("specularRed", 0).toInt();
-    specularColor.g = s.value("specularGreen", 0).toInt();
-    specularColor.b = s.value("specularBlue", 0).toInt();
+    specularColor.r = s.value("specularRed", 127).toInt();
+    specularColor.g = s.value("specularGreen", 127).toInt();
+    specularColor.b = s.value("specularBlue", 127).toInt();
     specularColor.a = s.value("specularAlpha", 1).toInt();
 
-    smoothing = s.value("smoothing", 0).toDouble();
-    curvature = s.value("curvature", 0).toInt();
+    smoothing = s.value("smoothing", 0.4f).toDouble();
+    curvature = s.value("curvature", 1).toInt();
 
-    sValue = s.value("sValue", 0).toDouble();
-    frosty = s.value("frosty", 0).toInt();
-    darkness = s.value("darkness", 0).toInt();
+    sValue = s.value("sValue", 50).toInt();
+    frosty = s.value("frosty", 1).toInt();
+    darkness = s.value("darkness", 0).toFloat();
     ht = s.value("ht", 0).toDouble();
 
 

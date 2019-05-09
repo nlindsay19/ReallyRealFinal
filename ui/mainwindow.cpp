@@ -8,7 +8,9 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <iostream>
-#include <Settings.h>
+#include "Settings.h"
+#include "materials/materialmanager.h"
+#include "ui/SupportCanvas2D.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -113,9 +115,6 @@ void MainWindow::dataBind() {
             ui->transformationTypeGlossy,
             ui->transformationTypeExtra))
 
-    // TODO: Bind push button?
-    // BIND(ChoiceBinding::bind)
-
     // Diffuse Sliders
     BIND(UCharBinding::bindSliderAndTextbox(
         ui->diffuseColorSliderRed, ui->diffuseColorTextboxRed, settings.diffuseColor.r, 0, 255))
@@ -136,11 +135,11 @@ void MainWindow::dataBind() {
     BIND(IntBinding::bindSliderAndTextbox(
         ui->curvatureSlider, ui->curvatureTextbox, settings.curvature, 0, 10))
     // Glass
-    BIND(FloatBinding::bindSliderAndTextbox(
-        ui->sSlider, ui->sTextbox, settings.sValue, 0, 1))
+    BIND(IntBinding::bindSliderAndTextbox(
+        ui->sSlider, ui->sTextbox, settings.sValue, 1, 50))
     BIND(IntBinding::bindSliderAndTextbox(
         ui->frostySlider, ui->frostyTextbox, settings.frosty, 0, 50))
-    BIND(IntBinding::bindSliderAndTextbox(
+    BIND(FloatBinding::bindSliderAndTextbox(
         ui->darknessSlider, ui->darkenssTextbox, settings.darkness, 1, 5))
     BIND(FloatBinding::bindSliderAndTextbox(
         ui->htSlider, ui->htTextbox, settings.ht, 0, 1))
@@ -193,6 +192,54 @@ void MainWindow::settingsChanged() {
 
 void MainWindow::transformPressed() {
     std::cout << "autobots roll out" << std::endl;
+
+    MaterialManager mm;
+    mm.materialParams.backgroundFile = "images/background.jpg";
+    mm.materialParams.mainImageFile = "images/han.jpg";
+    mm.materialParams.bilateralSmoothing = settings.smoothing / 100.f; //0.004f;
+    mm.materialParams.curvature = settings.curvature; //1.0f;
+    mm.materialParams.maskFile = "images/han_mask.jpg";
+    mm.materialParams.textureFile = "";
+
+    mm.materialParams.diffuse = Vector3f(settings.diffuseColor.r/255.f,settings.diffuseColor.g/255.f,settings.diffuseColor.b/255.f);
+    mm.materialParams.specular = Vector3f(settings.specularColor.r/255.f,settings.specularColor.g/255.f,settings.specularColor.b/255.f);
+
+
+    mm.materialParams.s = settings.sValue; //50;
+    mm.materialParams.frosty = settings.frosty; // 1;
+    mm.materialParams.glassColor = Vector3f(settings.diffuseColor.r/255.f,settings.diffuseColor.g/255.f,settings.diffuseColor.b/255.f);
+    mm.materialParams.darkness = settings.darkness; //1.2f;
+
+    switch(settings.transformationType) {
+        case TRANSFORMATION_BRDF:
+            mm.materialParams.makeMaterial = BRDF;
+            break;
+        case TRANSFORMATION_RETEXTURE:
+            mm.materialParams.makeMaterial = RETEXTURE;
+            break;
+        case TRANSFORMATION_GLASS:
+            mm.materialParams.makeMaterial = GLASS;
+            break;
+
+        case TRANSFORMATION_CAUSTIC:
+            mm.materialParams.makeMaterial = CAUSTIC;
+            break;
+
+        case TRANSFORMATION_GLOSSY:
+            mm.materialParams.makeMaterial = GLOSSY;
+            break;
+
+        case TRANSFORMATION_LIGHTING:
+            mm.materialParams.makeMaterial = LIGHTING;
+            break;
+    }
+    mm.transformMaterial();
+
+    std::cout << "done" << std::endl;
+
+    if (!ui->canvas2D->loadImage("images/output.png")) {
+        QMessageBox::critical(this, "Error", "Could not load image");
+    }
 }
 
 

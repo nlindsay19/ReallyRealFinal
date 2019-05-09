@@ -18,7 +18,7 @@ enum Transformation_Type {
     TRANSFORMATION_GLASS,
     TRANSFORMATION_CAUSTIC,
     TRANSFORMATION_GLOSSY,
-    TRANSFORMATION_EXTRA,
+    TRANSFORMATION_LIGHTING,
     NUM_BRUSH_TYPES
 };
 
@@ -52,9 +52,9 @@ struct Settings {
     BGRA specularColor;
     float smoothing;
     int curvature;
-    float sValue;
+    int sValue;
     int frosty;
-    int darkness;
+    float darkness;
     float ht;
 
     // Shapes
