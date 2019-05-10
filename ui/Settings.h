@@ -56,6 +56,9 @@ struct Settings {
     int frosty;
     float darkness;
     float ht;
+    QString imagePath;
+    QString backgroundPath;
+    QString texturePath;
 
     // Shapes
 //    bool drawWireframe;         // Draw wireframe only

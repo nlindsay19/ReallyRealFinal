@@ -83,7 +83,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>310</width>
+             <width>239</width>
              <height>3061</height>
             </rect>
            </property>
@@ -150,6 +150,75 @@
        <property name="text">
         <string>Transform</string>
        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="files">
+       <property name="title">
+        <string>Files</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <property name="bottomMargin">
+         <number>5</number>
+        </property>
+        <property name="verticalSpacing">
+         <number>5</number>
+        </property>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="backgroundButton">
+          <property name="text">
+           <string>Find</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="backgroundLabel">
+          <property name="text">
+           <string>Browse Background</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="textureComboBox"/>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="imageLabel">
+          <property name="text">
+           <string>Browse Image</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="imageButton">
+          <property name="text">
+           <string>Find</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="textureLabel">
+          <property name="text">
+           <string>Browse Texture</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="backgroundComboBox"/>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="textureButton">
+          <property name="text">
+           <string>Find</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="imageComboBox"/>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>
@@ -724,8 +793,6 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <zorder>diffuseColor</zorder>
-       <zorder>specularColor</zorder>
       </widget>
      </item>
     </layout>

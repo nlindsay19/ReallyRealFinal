@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[14];
-    char stringdata0[168];
+    QByteArrayData data[17];
+    char stringdata0[211];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -34,19 +34,23 @@ QT_MOC_LITERAL(1, 11, 17), // "updateAspectRatio"
 QT_MOC_LITERAL(2, 29, 0), // ""
 QT_MOC_LITERAL(3, 30, 15), // "settingsChanged"
 QT_MOC_LITERAL(4, 46, 16), // "transformPressed"
-QT_MOC_LITERAL(5, 63, 14), // "fileCopy3Dto2D"
-QT_MOC_LITERAL(6, 78, 7), // "fileNew"
-QT_MOC_LITERAL(7, 86, 8), // "fileOpen"
-QT_MOC_LITERAL(8, 95, 8), // "fileSave"
-QT_MOC_LITERAL(9, 104, 11), // "filterImage"
-QT_MOC_LITERAL(10, 116, 11), // "renderImage"
-QT_MOC_LITERAL(11, 128, 10), // "clearImage"
-QT_MOC_LITERAL(12, 139, 11), // "revertImage"
-QT_MOC_LITERAL(13, 151, 16) // "activateCanvas2D"
+QT_MOC_LITERAL(5, 63, 11), // "browseImage"
+QT_MOC_LITERAL(6, 75, 16), // "browseBackground"
+QT_MOC_LITERAL(7, 92, 13), // "browseTexture"
+QT_MOC_LITERAL(8, 106, 14), // "fileCopy3Dto2D"
+QT_MOC_LITERAL(9, 121, 7), // "fileNew"
+QT_MOC_LITERAL(10, 129, 8), // "fileOpen"
+QT_MOC_LITERAL(11, 138, 8), // "fileSave"
+QT_MOC_LITERAL(12, 147, 11), // "filterImage"
+QT_MOC_LITERAL(13, 159, 11), // "renderImage"
+QT_MOC_LITERAL(14, 171, 10), // "clearImage"
+QT_MOC_LITERAL(15, 182, 11), // "revertImage"
+QT_MOC_LITERAL(16, 194, 16) // "activateCanvas2D"
 
     },
     "MainWindow\0updateAspectRatio\0\0"
     "settingsChanged\0transformPressed\0"
+    "browseImage\0browseBackground\0browseTexture\0"
     "fileCopy3Dto2D\0fileNew\0fileOpen\0"
     "fileSave\0filterImage\0renderImage\0"
     "clearImage\0revertImage\0activateCanvas2D"
@@ -59,7 +63,7 @@ static const uint qt_meta_data_MainWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      12,   14, // methods
+      15,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -67,20 +71,26 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   74,    2, 0x0a /* Public */,
-       3,    0,   75,    2, 0x0a /* Public */,
-       4,    0,   76,    2, 0x0a /* Public */,
-       5,    0,   77,    2, 0x0a /* Public */,
-       6,    0,   78,    2, 0x0a /* Public */,
-       7,    0,   79,    2, 0x0a /* Public */,
-       8,    0,   80,    2, 0x0a /* Public */,
-       9,    0,   81,    2, 0x0a /* Public */,
-      10,    0,   82,    2, 0x0a /* Public */,
-      11,    0,   83,    2, 0x0a /* Public */,
-      12,    0,   84,    2, 0x0a /* Public */,
-      13,    0,   85,    2, 0x0a /* Public */,
+       1,    0,   89,    2, 0x0a /* Public */,
+       3,    0,   90,    2, 0x0a /* Public */,
+       4,    0,   91,    2, 0x0a /* Public */,
+       5,    0,   92,    2, 0x0a /* Public */,
+       6,    0,   93,    2, 0x0a /* Public */,
+       7,    0,   94,    2, 0x0a /* Public */,
+       8,    0,   95,    2, 0x0a /* Public */,
+       9,    0,   96,    2, 0x0a /* Public */,
+      10,    0,   97,    2, 0x0a /* Public */,
+      11,    0,   98,    2, 0x0a /* Public */,
+      12,    0,   99,    2, 0x0a /* Public */,
+      13,    0,  100,    2, 0x0a /* Public */,
+      14,    0,  101,    2, 0x0a /* Public */,
+      15,    0,  102,    2, 0x0a /* Public */,
+      16,    0,  103,    2, 0x0a /* Public */,
 
  // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -106,15 +116,18 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 0: _t->updateAspectRatio(); break;
         case 1: _t->settingsChanged(); break;
         case 2: _t->transformPressed(); break;
-        case 3: _t->fileCopy3Dto2D(); break;
-        case 4: _t->fileNew(); break;
-        case 5: _t->fileOpen(); break;
-        case 6: _t->fileSave(); break;
-        case 7: _t->filterImage(); break;
-        case 8: _t->renderImage(); break;
-        case 9: _t->clearImage(); break;
-        case 10: _t->revertImage(); break;
-        case 11: _t->activateCanvas2D(); break;
+        case 3: _t->browseImage(); break;
+        case 4: _t->browseBackground(); break;
+        case 5: _t->browseTexture(); break;
+        case 6: _t->fileCopy3Dto2D(); break;
+        case 7: _t->fileNew(); break;
+        case 8: _t->fileOpen(); break;
+        case 9: _t->fileSave(); break;
+        case 10: _t->filterImage(); break;
+        case 11: _t->renderImage(); break;
+        case 12: _t->clearImage(); break;
+        case 13: _t->revertImage(); break;
+        case 14: _t->activateCanvas2D(); break;
         default: ;
         }
     }
@@ -146,13 +159,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 12)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 12;
+        _id -= 15;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 12)
+        if (_id < 15)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 12;
+        _id -= 15;
     }
     return _id;
 }

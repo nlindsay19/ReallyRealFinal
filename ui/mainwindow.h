@@ -26,6 +26,10 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    QString m_image;
+    QString m_background;
+    QString m_texture;
+
 protected:
 
     // Overridden from QWidget. Handles the window resize event.
@@ -59,6 +63,10 @@ public slots:
     void settingsChanged();
 
     void transformPressed();
+
+    void browseImage();
+    void browseBackground();
+    void browseTexture();
 
     // Copy the contents of the 3D tab to the 2D tab
     void fileCopy3Dto2D();

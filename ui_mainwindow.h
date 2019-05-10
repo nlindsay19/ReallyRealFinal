@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
@@ -58,6 +59,17 @@ public:
     QWidget *transformationDockContents;
     QVBoxLayout *verticalLayout_3;
     QPushButton *transformButton;
+    QGroupBox *files;
+    QGridLayout *gridLayout_4;
+    QPushButton *backgroundButton;
+    QLabel *backgroundLabel;
+    QComboBox *textureComboBox;
+    QLabel *imageLabel;
+    QPushButton *imageButton;
+    QLabel *textureLabel;
+    QComboBox *backgroundComboBox;
+    QPushButton *textureButton;
+    QComboBox *imageComboBox;
     QGroupBox *transformationType;
     QVBoxLayout *verticalLayout;
     QRadioButton *transformationTypeBRDF;
@@ -167,7 +179,7 @@ public:
         scrollArea->setWidgetResizable(true);
         canvas2D = new Canvas2D();
         canvas2D->setObjectName(QStringLiteral("canvas2D"));
-        canvas2D->setGeometry(QRect(0, 0, 310, 3061));
+        canvas2D->setGeometry(QRect(0, 0, 239, 3061));
         scrollArea->setWidget(canvas2D);
 
         gridLayout_11->addWidget(scrollArea, 0, 0, 1, 1);
@@ -211,6 +223,62 @@ public:
         transformButton->setObjectName(QStringLiteral("transformButton"));
 
         verticalLayout_3->addWidget(transformButton);
+
+        files = new QGroupBox(transformationDockContents);
+        files->setObjectName(QStringLiteral("files"));
+        gridLayout_4 = new QGridLayout(files);
+        gridLayout_4->setSpacing(6);
+        gridLayout_4->setContentsMargins(11, 11, 11, 11);
+        gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
+        gridLayout_4->setVerticalSpacing(5);
+        gridLayout_4->setContentsMargins(-1, 5, -1, 5);
+        backgroundButton = new QPushButton(files);
+        backgroundButton->setObjectName(QStringLiteral("backgroundButton"));
+
+        gridLayout_4->addWidget(backgroundButton, 1, 2, 1, 1);
+
+        backgroundLabel = new QLabel(files);
+        backgroundLabel->setObjectName(QStringLiteral("backgroundLabel"));
+
+        gridLayout_4->addWidget(backgroundLabel, 1, 0, 1, 1);
+
+        textureComboBox = new QComboBox(files);
+        textureComboBox->setObjectName(QStringLiteral("textureComboBox"));
+
+        gridLayout_4->addWidget(textureComboBox, 3, 1, 1, 1);
+
+        imageLabel = new QLabel(files);
+        imageLabel->setObjectName(QStringLiteral("imageLabel"));
+
+        gridLayout_4->addWidget(imageLabel, 0, 0, 1, 1);
+
+        imageButton = new QPushButton(files);
+        imageButton->setObjectName(QStringLiteral("imageButton"));
+
+        gridLayout_4->addWidget(imageButton, 0, 2, 1, 1);
+
+        textureLabel = new QLabel(files);
+        textureLabel->setObjectName(QStringLiteral("textureLabel"));
+
+        gridLayout_4->addWidget(textureLabel, 3, 0, 1, 1);
+
+        backgroundComboBox = new QComboBox(files);
+        backgroundComboBox->setObjectName(QStringLiteral("backgroundComboBox"));
+
+        gridLayout_4->addWidget(backgroundComboBox, 1, 1, 1, 1);
+
+        textureButton = new QPushButton(files);
+        textureButton->setObjectName(QStringLiteral("textureButton"));
+
+        gridLayout_4->addWidget(textureButton, 3, 2, 1, 1);
+
+        imageComboBox = new QComboBox(files);
+        imageComboBox->setObjectName(QStringLiteral("imageComboBox"));
+
+        gridLayout_4->addWidget(imageComboBox, 0, 1, 1, 1);
+
+
+        verticalLayout_3->addWidget(files);
 
         transformationType = new QGroupBox(transformationDockContents);
         transformationType->setObjectName(QStringLiteral("transformationType"));
@@ -532,8 +600,6 @@ public:
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(emptySpaceBrush->sizePolicy().hasHeightForWidth());
         emptySpaceBrush->setSizePolicy(sizePolicy1);
-        diffuseColor->raise();
-        specularColor->raise();
 
         verticalLayout_3->addWidget(emptySpaceBrush);
 
@@ -600,6 +666,13 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tab3D), QApplication::translate("MainWindow", "3D", Q_NULLPTR));
         transformationDock->setWindowTitle(QApplication::translate("MainWindow", "Br&ush", Q_NULLPTR));
         transformButton->setText(QApplication::translate("MainWindow", "Transform", Q_NULLPTR));
+        files->setTitle(QApplication::translate("MainWindow", "Files", Q_NULLPTR));
+        backgroundButton->setText(QApplication::translate("MainWindow", "Find", Q_NULLPTR));
+        backgroundLabel->setText(QApplication::translate("MainWindow", "Browse Background", Q_NULLPTR));
+        imageLabel->setText(QApplication::translate("MainWindow", "Browse Image", Q_NULLPTR));
+        imageButton->setText(QApplication::translate("MainWindow", "Find", Q_NULLPTR));
+        textureLabel->setText(QApplication::translate("MainWindow", "Browse Texture", Q_NULLPTR));
+        textureButton->setText(QApplication::translate("MainWindow", "Find", Q_NULLPTR));
         transformationType->setTitle(QApplication::translate("MainWindow", "Transformation Type", Q_NULLPTR));
         transformationTypeBRDF->setText(QApplication::translate("MainWindow", "BRDF", Q_NULLPTR));
         transformationTypeRetexture->setText(QApplication::translate("MainWindow", "Retexture", Q_NULLPTR));

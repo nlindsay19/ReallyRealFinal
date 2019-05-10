@@ -101,8 +101,18 @@ void MainWindow::dataBind() {
     assert(connect(_b, SIGNAL(dataChanged()), this, SLOT(settingsChanged()))); \
 }
     connect(ui->transformButton, SIGNAL (released()),this, SLOT (transformPressed()));
+    connect(ui->imageButton, SIGNAL(clicked()), SLOT(browseImage()));
+    connect(ui->backgroundButton, SIGNAL(clicked()), SLOT(browseBackground()));
+    connect(ui->textureButton, SIGNAL(clicked()), SLOT(browseTexture()));
     QButtonGroup *transformationButtonGroup = new QButtonGroup;
     m_buttonGroups.push_back(transformationButtonGroup);
+
+//    BIND(UCharBinding::bindTextbox(
+//             ui->imageTextbox, settings.imagePath))
+//    BIND(UCharBinding::bindTextbox(
+//             ui->backgroundComboBox, settings.backgroundPath))
+//    BIND(UCharBinding::bindTextbox(
+//             ui->textureComboBox, settings.texturePath))
 
     BIND(ChoiceBinding::bindRadioButtons(
             transformationButtonGroup,
@@ -138,7 +148,7 @@ void MainWindow::dataBind() {
     BIND(IntBinding::bindSliderAndTextbox(
         ui->sSlider, ui->sTextbox, settings.sValue, 1, 50))
     BIND(IntBinding::bindSliderAndTextbox(
-        ui->frostySlider, ui->frostyTextbox, settings.frosty, 0, 50))
+        ui->frostySlider, ui->frostyTextbox, settings.frosty, 0, 15))
     BIND(FloatBinding::bindSliderAndTextbox(
         ui->darknessSlider, ui->darkenssTextbox, settings.darkness, 1, 5))
     BIND(FloatBinding::bindSliderAndTextbox(
@@ -190,16 +200,49 @@ void MainWindow::settingsChanged() {
     std::cout << "settings changed" << std::endl;
 }
 
+void MainWindow::browseImage() {
+    settings.imagePath = QFileDialog::getOpenFileName(this, tr("Open File"),
+                                                    QDir::currentPath(),
+                                                    tr("Images (*.png *.xpm *.jpg)"));
+    if (!settings.imagePath.isEmpty()) {
+        if (ui->imageComboBox->findText(settings.imagePath) == -1)
+            ui->imageComboBox->addItem(settings.imagePath);
+        ui->imageComboBox->setCurrentIndex(ui->imageComboBox->findText(settings.imagePath));
+    }
+}
+
+void MainWindow::browseBackground() {
+    settings.backgroundPath = QFileDialog::getOpenFileName(this, tr("Open File"),
+                                                    QDir::currentPath(),
+                                                    tr("Images (*.png *.xpm *.jpg)"));
+    if (!settings.backgroundPath.isEmpty()) {
+        if (ui->backgroundComboBox->findText(settings.backgroundPath) == -1)
+            ui->backgroundComboBox->addItem(settings.backgroundPath);
+        ui->backgroundComboBox->setCurrentIndex(ui->backgroundComboBox->findText(settings.backgroundPath));
+    }
+}
+
+void MainWindow::browseTexture() {
+    settings.texturePath = QFileDialog::getOpenFileName(this, tr("Open File"),
+                                                    QDir::currentPath(),
+                                                    tr("Images (*.png *.xpm *.jpg)"));
+    if (!m_texture.isEmpty()) {
+        if (ui->textureComboBox->findText(settings.texturePath) == -1)
+            ui->textureComboBox->addItem(settings.texturePath);
+        ui->textureComboBox->setCurrentIndex(ui->textureComboBox->findText(settings.texturePath));
+    }
+}
+
 void MainWindow::transformPressed() {
     std::cout << "autobots roll out" << std::endl;
 
     MaterialManager mm;
-    mm.materialParams.backgroundFile = "images/background.jpg";
-    mm.materialParams.mainImageFile = "images/han.jpg";
+    mm.materialParams.backgroundFile = "images/han.jpg"; //settings.backgroundPath;
+    mm.materialParams.mainImageFile = "images/background.jpg"; //settings.imagePath;
     mm.materialParams.bilateralSmoothing = settings.smoothing / 100.f; //0.004f;
     mm.materialParams.curvature = settings.curvature; //1.0f;
     mm.materialParams.maskFile = "images/han_mask.jpg";
-    mm.materialParams.textureFile = "";
+    mm.materialParams.textureFile = settings.texturePath;
 
     mm.materialParams.diffuse = Vector3f(settings.diffuseColor.r/255.f,settings.diffuseColor.g/255.f,settings.diffuseColor.b/255.f);
     mm.materialParams.specular = Vector3f(settings.specularColor.r/255.f,settings.specularColor.g/255.f,settings.specularColor.b/255.f);
