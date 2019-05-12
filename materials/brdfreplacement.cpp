@@ -56,6 +56,10 @@ void BrdfReplacement::importanceSampling(int rows, int cols, std::vector<Vector3
     MatrixXf l_greens(m_maskArea, sampleNum);
     greens = l_greens;
 
+    for(int i = 0; i < inpainting.size(); i++){
+        specularDirs.push_back(Vector3f(0,0,0));
+    }
+
 }
 
 std::vector<Vector3f> BrdfReplacement::sample(std::vector<Vector3f> inpainting, std::vector<Vector3f> mask, std::vector<Vector3f> directions, std::vector<Vector3f> normals, std::vector<Vector3f> sampledColors, int rows, int cols){
@@ -85,17 +89,24 @@ std::vector<Vector3f> BrdfReplacement::sample(std::vector<Vector3f> inpainting, 
                     }
 
                 }
+                Vector3f V = Vector3f(x - xC, rows - y - yC, 100); // theres something goin on here
+                V = V.normalized();
+                int objectInd = y * cols + x;
+                Vector3f objectNormal = normals[objectInd];
+                objectNormal = objectNormal.normalized();
+                //if(m_solve){
+                    Vector3f specRefl = (V) - 2 * (objectNormal.dot(V)) * objectNormal;
+                    specularDirs[objectInd] = (-specRefl).normalized();
+                //}
+
                 for(int sample = 0; sample < sampledColors.size(); sample++){
 
-                    int objectInd = y * cols + x;
+
                     Vector3f sampleDir = directions[sample].normalized();
 
                     Vector3f li = sampledColors[sample] / 255.0;
 
-                    Vector3f V = Vector3f(x - xC, rows - y - yC, 100); // theres something goin on here
-                    V = V.normalized();
-                    Vector3f objectNormal = normals[objectInd];
-                    objectNormal = objectNormal.normalized();
+
 
                     if(sampleDir.dot(objectNormal) > 0){
                         pixelToSampleIds[objectInd].push_back(sample);
@@ -103,22 +114,26 @@ std::vector<Vector3f> BrdfReplacement::sample(std::vector<Vector3f> inpainting, 
                         float nDotL = fmin(1.0,sampleDir.dot(objectNormal));
                         Vector3f refl = (sampleDir) - 2 * (objectNormal.dot(sampleDir)) * objectNormal;
                         refl = -refl.normalized();
-                        Vector3f coeff = color/(M_PI) + specular/(M_PI) * (n + 2) * pow(fmax(0, refl.dot(V)), n);
-                        lPrime[0] += fmin(li[0] * coeff[0] * nDotL, 1.0);
-                        lPrime[1] += fmin(li[1] * coeff[1] * nDotL, 1.0);
-                        lPrime[2] += fmin(li[2] * coeff[2] * nDotL, 1.0);
+                        Vector3f diffuseCoeff = color/(M_PI);
+                        Vector3f specularCoeff = specular/(M_PI) * (n + 2) * pow(fmax(0, refl.dot(V)), n);
+                        Vector3f coeff = diffuseCoeff + specularCoeff;
+                        lPrime[0] += fmin(li[0] * coeff[0] * nDotL , 1.0);
+                        lPrime[1] += fmin(li[1] * coeff[1]  * nDotL, 1.0);
+                        lPrime[2] += fmin(li[2] * coeff[2]  * nDotL, 1.0);
 
                         if(m_solve){
                             float pdf = 1.0f/(M_PI * 2.0f);
                             reds(maskInd, sample) = (fmin(coeff[0] * nDotL, 1.0)/pdf)/sampleCount;
                             greens(maskInd, sample) = (fmin(coeff[1] * nDotL, 1.0)/pdf)/sampleCount;
                             blues(maskInd, sample) = (fmin(coeff[2] * nDotL, 1.0)/pdf)/sampleCount;
+
                         }
                     } else{
                         if(m_solve){
                             reds(maskInd, sample) = 0;
                             greens(maskInd, sample) = 0;
                             blues(maskInd, sample) = 0;
+
                         }
                     }
                 }
@@ -139,15 +154,51 @@ std::vector<Vector3f> BrdfReplacement::sample(std::vector<Vector3f> inpainting, 
     return brdfReplacement;
 }
 
+void BrdfReplacement::sampleSpecular(std::vector<Vector3f> &image, std::vector<Vector3f> mask, std::vector<Vector3f> normals,int rows, int cols, std::vector<Vector3f> highlights){
+    int indexCounter = 0;
+    float xC = float(cols)/2;
+    float yC = float(rows)/2;
+
+    for(int y = 0; y < rows; y++){
+        for(int x = 0; x < cols; x++){
+            Vector3f intensity = Vector3f(0,0,0);
+            for(int light = 0; light < highlights.size(); light++){
+                if(mask[indexCounter][0] > 150){
+                       int objectInd = indexCounter;
+                       Vector3f objectNormal = normals[objectInd];
+                       Vector3f lightDir = highlights[light];
+                       Vector3f V = Vector3f(x - xC, rows - y - yC, 100); // theres something goin on here
+                       V = V.normalized();
+
+                       Vector3f refl = (lightDir) - 2 * (objectNormal.dot(lightDir)) * objectNormal;
+                       refl = -refl.normalized();
+                       intensity[0] += pow(V.dot(refl), 50);
+                       intensity[1] += pow(V.dot(refl), 50);
+                       intensity[2] += pow(V.dot(refl), 50);
+                }
+                indexCounter += 1;
+            }
+            image[y * cols + x][0] = fmin((image[y * cols + x][0]/255.0f + intensity[0]) * 255.0f, 255.0f);
+            image[y * cols + x][1] = fmin((image[y * cols + x][1]/255.0f + intensity[1]) * 255.0f, 255.0f);
+            image[y * cols + x][2] = fmin((image[y * cols + x][2]/255.0f + intensity[2]) * 255.0f, 255.0f);
+
+        }
+    }
+
+}
+
 std::vector<Vector3f> BrdfReplacement::replaceBrdf(std::vector<Vector3f> inpainting, std::vector<Vector3f> mask, std::vector<Vector3f> normals,int rows, int cols){
     std::vector<Vector3f> directions;
     std::vector<Vector3f> sampledColors;
     importanceSampling(rows, cols, directions, sampledColors, inpainting);
     m_solve = 0;
-    return sample(inpainting, mask, directions, normals, sampledColors, rows, cols);
+    std::vector<Vector3f> image = sample(inpainting, mask, directions, normals, sampledColors, rows, cols);
+
+    return image;
+
 }
 
-std::vector<Vector3f> BrdfReplacement::paintEnvMap(std::vector<Vector3f> inpainting, std::vector<Vector3f> mask, std::vector<Vector3f> normals,int rows, int cols){
+std::vector<Vector3f> BrdfReplacement::paintEnvMap(std::vector<Vector3f> inpainting, std::vector<Vector3f> mask, std::vector<Vector3f> normals,int rows, int cols, std::vector<Vector3f> desiredColors, Vector2f highlight){
     std::vector<Vector3f> directions;
     std::vector<Vector3f> sampledColors;
 
@@ -172,19 +223,14 @@ std::vector<Vector3f> BrdfReplacement::paintEnvMap(std::vector<Vector3f> inpaint
     for(int i = 0; i < rows; i ++){
         for(int j = 0; j < cols; j ++){
             if(mask[i * cols + j][0] > 150){
-                if(j < 120){
-                   changedPixels.push_back(maskInd);
-                }
-//                if(i > float(rows) * 1.0f / 4 && i < float(rows) * 3.0f / 4){
-//                   changedPixels.push_back(maskInd);
-//                }
-                else if(i > (float(rows) * 3.0f / 4)){
-                   changedPixels.push_back(maskInd);
+                if(desiredColors[i * cols + j] != Vector3f(0,0,0)){
+                    changedPixels.push_back(maskInd);
                 }
                 maskInd += 1;
             }
         }
     }
+    std::cout << "number of user color inputs: " << changedPixels.size() << std::endl;
     VectorXf desiredReds(changedPixels.size());
     VectorXf desiredGreens(changedPixels.size());
     VectorXf desiredBlues(changedPixels.size());
@@ -192,23 +238,11 @@ std::vector<Vector3f> BrdfReplacement::paintEnvMap(std::vector<Vector3f> inpaint
     for(int i = 0; i < rows; i ++){
         for(int j = 0; j < cols; j ++){
             if(mask[i * cols + j][0] > 150){
-                if(j < 120){
-                    desiredReds(desired_num) = 255;
-                    desiredGreens(desired_num) = 0;
-                    desiredBlues(desired_num) = 0;
-                    desired_num += 1;
-                }
-//                if(i > float(rows) * 1.0f / 4 && i < float(rows) * 3.0f / 4){
-//                    desiredReds(desired_num) = 0;
-//                    desiredGreens(desired_num) = 0;
-//                    desiredBlues(desired_num) = 255;
-//                    desired_num += 1;
-//                }
-                else if(i > (float(rows) * 3.0f / 4)){
-                    desiredReds(desired_num) = 0;
-                    desiredGreens(desired_num) = 255;
-                    desiredBlues(desired_num) = 0;
-                    desired_num += 1;
+                if(desiredColors[i * cols + j] != Vector3f(0,0,0)){
+                     desiredReds(desired_num) = desiredColors[i * cols + j][0];
+                     desiredGreens(desired_num) = desiredColors[i * cols + j][1];
+                     desiredBlues(desired_num) = desiredColors[i * cols + j][2];
+                     desired_num += 1;
                 }
             }
         }
@@ -258,9 +292,17 @@ std::vector<Vector3f> BrdfReplacement::paintEnvMap(std::vector<Vector3f> inpaint
         sampledColors[i] = Vector3f(fmax(fmin(solveRed(i), 255),0), fmax(fmin(solveGreen(i), 255),0), fmax(fmin(solveBlue(i), 255),0));
     }
 
+
     saveEnvmap(sampledColors);
 
-    return sample(inpainting, mask, directions, normals, sampledColors, rows, cols);
+    std::vector<Vector3f> image = sample(inpainting, mask, directions, normals, sampledColors, rows, cols);
+
+    std::vector<Vector3f> highlights;
+    if(highlight[0] >= 0 && highlight[1] >= 0){
+        highlights.push_back(specularDirs[highlight[1] * cols + highlight[0]].normalized());
+        sampleSpecular(image, mask, normals,rows,cols, highlights);
+    }
+    return image;
 }
 
 void BrdfReplacement::getNewEnvmap(std::string filename, VectorXf &envmapChannel){

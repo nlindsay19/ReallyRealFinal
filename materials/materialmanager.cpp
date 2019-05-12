@@ -189,7 +189,7 @@ bool MaterialManager::changeLighting(){
     br.m_diffuse = Vector3f(1.0f,1.0f,1.0f);
     br.m_specular = Vector3f(0.5f,0.5f,0.5f);
 
-    std::vector<Vector3f> replaced = br.paintEnvMap(inpainting, mask.toVector(), normals, rows, cols);
+    std::vector<Vector3f> replaced = br.paintEnvMap(inpainting, mask.toVector(), normals, rows, cols, materialParams.desiredColors, materialParams.highlight);
     vectorToFile(replaced, "images/output.png", rows, cols);
     return true;
 }

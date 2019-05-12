@@ -237,8 +237,8 @@ void MainWindow::transformPressed() {
     std::cout << "autobots roll out" << std::endl;
 
     MaterialManager mm;
-    mm.materialParams.backgroundFile = "images/han.jpg"; //settings.backgroundPath;
-    mm.materialParams.mainImageFile = "images/background.jpg"; //settings.imagePath;
+    mm.materialParams.backgroundFile = "images/background.jpg"; //settings.backgroundPath;
+    mm.materialParams.mainImageFile = "images/han.jpg"; //settings.imagePath;
     mm.materialParams.bilateralSmoothing = settings.smoothing / 100.f; //0.004f;
     mm.materialParams.curvature = settings.curvature; //1.0f;
     mm.materialParams.maskFile = "images/han_mask.jpg";
@@ -273,6 +273,8 @@ void MainWindow::transformPressed() {
             break;
 
         case TRANSFORMATION_LIGHTING:
+            mm.materialParams.desiredColors = ui->canvas2D->getPaintedColors();
+            mm.materialParams.highlight = ui->canvas2D->highlight;
             mm.materialParams.makeMaterial = LIGHTING;
             break;
     }

@@ -42,6 +42,10 @@ struct MaterialParams{
     float darkness = 1.8;
     //highlight threshhold
 
+    //for environment map calculation
+    std::vector<Vector3f> desiredColors;
+    Vector2f highlight;
+
     MaterialChangeType makeMaterial = BRDF;
 };
 

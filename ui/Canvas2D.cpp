@@ -17,7 +17,7 @@
 #include "Canvas2D.h"
 #include "Settings.h"
 #include "RayScene.h"
-
+#include <QKeyEvent>
 
 #include <QPainter>
 
@@ -25,6 +25,7 @@ Canvas2D::Canvas2D() :
     // @TODO: Initialize any pointers in this class here.
     m_rayScene(nullptr)
 {
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 Canvas2D::~Canvas2D()
@@ -62,6 +63,25 @@ void Canvas2D::mouseDown(int x, int y) {
 
 void Canvas2D::mouseDragged(int x, int y) {
     // TODO: [BRUSH] Mouse interaction for Brush.
+
+    if(settings.transformationType == TRANSFORMATION_LIGHTING){
+        if(m_drawnColors.size() == 0){
+            for(int i = 0; i < m_image->height(); i++){
+                for(int j = 0; j < m_image->width(); j++){
+                    m_drawnColors.push_back(Eigen::Vector3f(0,0,0));
+                }
+            }
+        }
+        if(y < m_image->height() && x < m_image->width() && y > 0 && x > 0){
+            int index = y * m_image->width() + x;
+            m_drawnColors[index] = Eigen::Vector3f((float)settings.diffuseColor.r, (float)settings.diffuseColor.g, (float)settings.diffuseColor.b);
+            m_image->setPixelColor(x, y, QColor(settings.diffuseColor.r, settings.diffuseColor.g, settings.diffuseColor.b));
+        }
+        if(m_hDown){
+            highlight = Eigen::Vector2f(x,y);
+        }
+    }
+    update();
 
 }
 
@@ -111,4 +131,18 @@ void Canvas2D::cancelRender() {
 
 void Canvas2D::settingsChanged() {
     // TODO: Process changes to the application settings.
+}
+
+void Canvas2D::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_H) {
+        m_hDown = 1;
+    }
+}
+
+void Canvas2D::keyReleaseEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_H) {
+        m_hDown = 0;
+    }
 }

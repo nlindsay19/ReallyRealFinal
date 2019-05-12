@@ -4,7 +4,8 @@
 #include <memory>
 
 #include "SupportCanvas2D.h"
-
+#include <Eigen/Dense>
+#include <QGLWidget>
 class RayScene;
 
 class Camera;
@@ -31,6 +32,10 @@ public:
 
     QImage* getImage() { return m_image; }
 
+    std::vector<Eigen::Vector3f> getPaintedColors() {return m_drawnColors; }
+
+    int m_hDown;
+    Eigen::Vector2f highlight = Eigen::Vector2f(-1,-1);
 
 public slots:
     // UI will call this from the button on the "Ray" dock
@@ -45,6 +50,10 @@ protected:
     virtual void mouseDragged(int x, int y); // Called when left mouse button is dragged on canvas
     virtual void mouseUp(int x, int y);      // Called when left mouse button is released
 
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
+
+
     // Called when the size of the canvas has been changed
     virtual void notifySizeChanged(int w, int h);
 
@@ -54,6 +63,7 @@ private:
 
     std::unique_ptr<RayScene> m_rayScene;
 
+    std::vector<Eigen::Vector3f> m_drawnColors;
     //TODO: [BRUSH, INTERSECT, RAY] Put your member variables here.
 
 };

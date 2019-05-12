@@ -25,7 +25,8 @@ public:
     void importanceSampling(int rows, int cols, std::vector<Eigen::Vector3f>& directionVectors, std::vector<Eigen::Vector3f>& sampledColors, std::vector<Eigen::Vector3f> inpainting);
     std::vector<Eigen::Vector3f> replaceBrdf(std::vector<Eigen::Vector3f> inpainting, std::vector<Eigen::Vector3f> mask, std::vector<Eigen::Vector3f> normals,int rows, int cols);
 
-    std::vector<Eigen::Vector3f> paintEnvMap(std::vector<Eigen::Vector3f> inpainting, std::vector<Eigen::Vector3f> mask, std::vector<Eigen::Vector3f> normals,int rows, int cols);
+    std::vector<Eigen::Vector3f> paintEnvMap(std::vector<Eigen::Vector3f> inpainting, std::vector<Eigen::Vector3f> mask, std::vector<Eigen::Vector3f> normals,int rows, int cols, std::vector<Eigen::Vector3f> desiredColors, Eigen::Vector2f highlight);
+    void sampleSpecular(std::vector<Eigen::Vector3f> &image, std::vector<Eigen::Vector3f> mask, std::vector<Eigen::Vector3f> normals,int rows, int cols, std::vector<Eigen::Vector3f> highlights);
 
     Eigen::Vector3f m_diffuse;
     Eigen::Vector3f m_specular;
@@ -40,6 +41,12 @@ public:
     Eigen::MatrixXf reds;
     Eigen::MatrixXf greens;
     Eigen::MatrixXf blues;
+
+    Eigen::MatrixXf redSpecular;
+    Eigen::MatrixXf greenSpecular;
+    Eigen::MatrixXf blueSpecular;
+
+    std::vector<Eigen::Vector3f> specularDirs;
 
     int m_solve = 0;
     int m_maskArea = 0;
