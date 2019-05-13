@@ -34,8 +34,17 @@ public:
 
     std::vector<Eigen::Vector3f> getPaintedColors() {return m_drawnColors; }
 
+    //env map estimation
+    std::vector<Eigen::Vector3f> envmapImage;
+    std::vector<Eigen::Vector3f> envmapNormals;
+    std::vector<Eigen::Vector3f> envmapMask;
+    std::vector<Eigen::Vector3f> envmapSpecularDirs;
+    int envmapRows = -1;
+    int envmapCols = -1;
+
     int m_hDown;
     Eigen::Vector2f highlight = Eigen::Vector2f(-1,-1);
+    std::vector<Eigen::Vector3f> m_highlightColors;
 
 public slots:
     // UI will call this from the button on the "Ray" dock
@@ -64,6 +73,7 @@ private:
     std::unique_ptr<RayScene> m_rayScene;
 
     std::vector<Eigen::Vector3f> m_drawnColors;
+
     //TODO: [BRUSH, INTERSECT, RAY] Put your member variables here.
 
 };

@@ -190,7 +190,20 @@ bool MaterialManager::changeLighting(){
     br.m_specular = Vector3f(0.5f,0.5f,0.5f);
 
     std::vector<Vector3f> replaced = br.paintEnvMap(inpainting, mask.toVector(), normals, rows, cols, materialParams.desiredColors, materialParams.highlight);
+    materialResults.image = replaced;
+    materialResults.mask = mask.toVector();
+    materialResults.normals = normals;
+    materialResults.specularDirs = br.specularDirs;
+    materialResults.rows = rows;
+    materialResults.cols = cols;
+    br.addHighlightsToEnvmap(replaced, mask.toVector(), normals, rows, cols, materialParams.highlightColors, materialParams.highlight);
+
     vectorToFile(replaced, "images/output.png", rows, cols);
+
+    for(int i = 0; i < materialParams.desiredColors.size(); i++){
+        materialParams.desiredColors[i] = Vector3f(0,0,0);
+    }
+    materialParams.highlight = Vector2f(-1.0f,-1.0f);
     return true;
 }
 

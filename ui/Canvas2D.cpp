@@ -18,7 +18,8 @@
 #include "Settings.h"
 #include "RayScene.h"
 #include <QKeyEvent>
-
+#include "materials/brdfreplacement.h"
+#include "materials/materialmanager.h"
 #include <QPainter>
 
 Canvas2D::Canvas2D() :
@@ -26,6 +27,7 @@ Canvas2D::Canvas2D() :
     m_rayScene(nullptr)
 {
     setFocusPolicy(Qt::StrongFocus);
+    m_hDown = 0;
 }
 
 Canvas2D::~Canvas2D()
@@ -69,6 +71,7 @@ void Canvas2D::mouseDragged(int x, int y) {
             for(int i = 0; i < m_image->height(); i++){
                 for(int j = 0; j < m_image->width(); j++){
                     m_drawnColors.push_back(Eigen::Vector3f(0,0,0));
+                    m_highlightColors.push_back(Eigen::Vector3f(0,0,0));
                 }
             }
         }
@@ -78,7 +81,25 @@ void Canvas2D::mouseDragged(int x, int y) {
             m_image->setPixelColor(x, y, QColor(settings.diffuseColor.r, settings.diffuseColor.g, settings.diffuseColor.b));
         }
         if(m_hDown){
-            highlight = Eigen::Vector2f(x,y);
+            if(y < m_image->height() && x < m_image->width() && y > 0 && x > 0){
+                int index = y * m_image->width() + x;
+                m_highlightColors[index] = Eigen::Vector3f((float)settings.specularColor.r, (float)settings.specularColor.g, (float)settings.specularColor.b);
+                m_image->setPixelColor(x, y, QColor(settings.specularColor.r, settings.specularColor.g, settings.specularColor.b));
+                highlight = Eigen::Vector2f(x,y);
+                if(envmapRows > 0){
+                    BrdfReplacement br;
+                    br.specularDirs = envmapSpecularDirs;
+                    std::vector<Eigen::Vector3f> copyImage = envmapImage;
+                    br.addHighlightsToEnvmap(envmapImage, envmapMask, envmapNormals, envmapRows, envmapCols, m_highlightColors, highlight);
+                    MaterialManager mm;
+                    mm.vectorToFile(envmapImage, "images/output.png", envmapRows, envmapCols);
+                    envmapImage = copyImage;
+                    if (!loadImage("images/output.png")) {
+                        std::cout << "couldn't load image" << std::endl;
+                    }
+
+                }
+            }
         }
     }
     update();
@@ -87,6 +108,7 @@ void Canvas2D::mouseDragged(int x, int y) {
 
 void Canvas2D::mouseUp(int x, int y) {
     // TODO: [BRUSH] Mouse interaction for Brush.
+
 
 }
 

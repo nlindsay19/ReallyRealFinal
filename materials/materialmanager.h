@@ -44,9 +44,19 @@ struct MaterialParams{
 
     //for environment map calculation
     std::vector<Vector3f> desiredColors;
+    std::vector<Vector3f> highlightColors;
     Vector2f highlight;
 
     MaterialChangeType makeMaterial = BRDF;
+};
+
+struct MaterialResults{
+    std::vector<Vector3f> image;
+    std::vector<Vector3f> normals;
+    std::vector<Vector3f> mask;
+    std::vector<Eigen::Vector3f> specularDirs;
+    int rows = 0;
+    int cols = 0;
 };
 
 class MaterialManager
@@ -54,7 +64,7 @@ class MaterialManager
 public:
     MaterialManager();
     MaterialParams materialParams;
-
+    MaterialResults materialResults;
     bool changeBrdf();
     bool areBasicParamsValid();
     void vectorToFile(std::vector<Vector3f> data, QString filenameOut, int rows, int cols);

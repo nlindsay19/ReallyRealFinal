@@ -160,6 +160,7 @@ void MainWindow::dataBind() {
 
     // make sure the aspect ratio updates when m_canvas3D changes size
 //    connect(m_canvas3D, SIGNAL(aspectRatioChanged()), this, SLOT(updateAspectRatio()));
+
 }
 
 void MainWindow::changeEvent(QEvent *e) {
@@ -274,16 +275,27 @@ void MainWindow::transformPressed() {
 
         case TRANSFORMATION_LIGHTING:
             mm.materialParams.desiredColors = ui->canvas2D->getPaintedColors();
+            mm.materialParams.highlightColors = ui->canvas2D->m_highlightColors;
             mm.materialParams.highlight = ui->canvas2D->highlight;
             mm.materialParams.makeMaterial = LIGHTING;
             break;
     }
     mm.transformMaterial();
 
-    std::cout << "done" << std::endl;
-
     if (!ui->canvas2D->loadImage("images/output.png")) {
         QMessageBox::critical(this, "Error", "Could not load image");
+    }
+
+    if(settings.transformationType == TRANSFORMATION_LIGHTING){
+        ui->canvas2D->envmapImage = mm.materialResults.image;
+        ui->canvas2D->envmapNormals = mm.materialResults.normals;
+        ui->canvas2D->envmapMask = mm.materialResults.mask;
+        ui->canvas2D->envmapRows = mm.materialResults.rows;
+        ui->canvas2D->envmapCols = mm.materialResults.cols;
+        ui->canvas2D->envmapSpecularDirs = mm.materialResults.specularDirs;
+    } else {
+        ui->canvas2D->envmapRows = -1;
+        ui->canvas2D->envmapCols = -1;
     }
 }
 

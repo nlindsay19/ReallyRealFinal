@@ -154,7 +154,7 @@ std::vector<Vector3f> BrdfReplacement::sample(std::vector<Vector3f> inpainting, 
     return brdfReplacement;
 }
 
-void BrdfReplacement::sampleSpecular(std::vector<Vector3f> &image, std::vector<Vector3f> mask, std::vector<Vector3f> normals,int rows, int cols, std::vector<Vector3f> highlights){
+void BrdfReplacement::sampleSpecular(std::vector<Vector3f> &image, std::vector<Vector3f> mask, std::vector<Vector3f> normals,int rows, int cols, std::vector<Vector3f> highlights, std::vector<Vector3f> lightColors){
     int indexCounter = 0;
     float xC = float(cols)/2;
     float yC = float(rows)/2;
@@ -176,6 +176,9 @@ void BrdfReplacement::sampleSpecular(std::vector<Vector3f> &image, std::vector<V
                        intensity[1] += pow(V.dot(refl), 50);
                        intensity[2] += pow(V.dot(refl), 50);
                 }
+                intensity[0] *= lightColors[light][0] / 255.0f;
+                intensity[1] *= lightColors[light][1] / 255.0f;
+                intensity[2] *= lightColors[light][2] / 255.0f;
                 indexCounter += 1;
             }
             image[y * cols + x][0] = fmin((image[y * cols + x][0]/255.0f + intensity[0]) * 255.0f, 255.0f);
@@ -297,12 +300,24 @@ std::vector<Vector3f> BrdfReplacement::paintEnvMap(std::vector<Vector3f> inpaint
 
     std::vector<Vector3f> image = sample(inpainting, mask, directions, normals, sampledColors, rows, cols);
 
-    std::vector<Vector3f> highlights;
-    if(highlight[0] >= 0 && highlight[1] >= 0){
-        highlights.push_back(specularDirs[highlight[1] * cols + highlight[0]].normalized());
-        sampleSpecular(image, mask, normals,rows,cols, highlights);
-    }
+//    std::vector<Vector3f> highlights;
+//    std::vector<Vector3f> lightColors;
+//    if(highlight[0] >= 0 && highlight[1] >= 0){
+//        highlights.push_back(specularDirs[highlight[1] * cols + highlight[0]].normalized()); // light direction
+//        lightColors.push_back(desiredColors[highlight[1] * cols + highlight[0]]);
+//        sampleSpecular(image, mask, normals,rows,cols, highlights, lightColors);
+//    }
     return image;
+}
+
+void BrdfReplacement::addHighlightsToEnvmap(std::vector<Vector3f> &image, std::vector<Vector3f> mask, std::vector<Vector3f> normals, int rows, int cols, std::vector<Vector3f> desiredColors, Vector2f highlight){
+    std::vector<Vector3f> highlights;
+    std::vector<Vector3f> lightColors;
+    if(highlight[0] >= 0 && highlight[1] >= 0){
+        highlights.push_back(specularDirs[highlight[1] * cols + highlight[0]].normalized()); // light direction
+        lightColors.push_back(desiredColors[highlight[1] * cols + highlight[0]]);
+        sampleSpecular(image, mask, normals,rows,cols, highlights, lightColors);
+    }
 }
 
 void BrdfReplacement::getNewEnvmap(std::string filename, VectorXf &envmapChannel){

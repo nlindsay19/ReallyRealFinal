@@ -26,7 +26,8 @@ public:
     std::vector<Eigen::Vector3f> replaceBrdf(std::vector<Eigen::Vector3f> inpainting, std::vector<Eigen::Vector3f> mask, std::vector<Eigen::Vector3f> normals,int rows, int cols);
 
     std::vector<Eigen::Vector3f> paintEnvMap(std::vector<Eigen::Vector3f> inpainting, std::vector<Eigen::Vector3f> mask, std::vector<Eigen::Vector3f> normals,int rows, int cols, std::vector<Eigen::Vector3f> desiredColors, Eigen::Vector2f highlight);
-    void sampleSpecular(std::vector<Eigen::Vector3f> &image, std::vector<Eigen::Vector3f> mask, std::vector<Eigen::Vector3f> normals,int rows, int cols, std::vector<Eigen::Vector3f> highlights);
+    void sampleSpecular(std::vector<Eigen::Vector3f> &image, std::vector<Eigen::Vector3f> mask, std::vector<Eigen::Vector3f> normals,int rows, int cols, std::vector<Eigen::Vector3f> highlights, std::vector<Eigen::Vector3f> lightcols);
+    void addHighlightsToEnvmap(std::vector<Eigen::Vector3f> &image, std::vector<Eigen::Vector3f> mask, std::vector<Eigen::Vector3f> normals, int rows, int cols, std::vector<Eigen::Vector3f> desiredColors, Eigen::Vector2f highlight);
 
     Eigen::Vector3f m_diffuse;
     Eigen::Vector3f m_specular;
