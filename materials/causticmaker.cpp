@@ -66,6 +66,7 @@ std::vector<Vector3f> CausticMaker::project(float x1, float y1, float x2, float 
         }
     }
     std::cout <<  fmin(x1, x4) << " " << fmax(x2, x3)<< std::endl;
+    std::cout << m_caustic.size() << std::endl;
     float alpha = 0.6;
     for(int i = 0; i < m_rows; i++){
         for(int j = 0; j < m_cols; j++){
@@ -74,10 +75,10 @@ std::vector<Vector3f> CausticMaker::project(float x1, float y1, float x2, float 
             int y = int(invMap[1]);
             if( i > fmin(y1, y2) && i < fmax(y3, y4)){
                 if(j > fmin(x1, x4) && j < fmax(x2, x3)){
-                    if( m_caustic[y * m_cols + x][0] > 3 && x < m_cols && y < m_rows and x > 0 and y > 0){
-                        result[i * m_cols + j][0] = fmin(alpha * m_caustic[y * m_cols + x][0] + m_image[i * m_cols + j][0], 255);
-                        result[i * m_cols + j][1] = fmin(alpha * m_caustic[y * m_cols + x][1] + m_image[i * m_cols + j][1], 255);
-                        result[i * m_cols + j][2] = fmin(alpha * m_caustic[y * m_cols + x][2] + m_image[i * m_cols + j][2], 255);
+                    if( m_caustic[y * m_cols + x][0] > 0 && x < m_cols && y < m_rows && x > 0 && y > 0){
+                        result[i * m_cols + j][0] = fmin(alpha * 255.0 * m_caustic[y * m_cols + x][0] + m_image[i * m_cols + j][0], 255);
+                        result[i * m_cols + j][1] = fmin(alpha * 255.0 * m_caustic[y * m_cols + x][1] + m_image[i * m_cols + j][1], 255);
+                        result[i * m_cols + j][2] = fmin(alpha * 255.0 * m_caustic[y * m_cols + x][2] + m_image[i * m_cols + j][2], 255);
                     } else {
                         result[i * m_cols + j]  = m_image[i * m_cols + j];
                     }

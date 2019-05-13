@@ -217,9 +217,12 @@ std::vector<Vector3f> BrdfReplacement::paintEnvMap(std::vector<Vector3f> inpaint
 
     // store lighting coefficients
     m_solve = 1;
-    sample(inpainting, mask, directions, normals, sampledColors, rows, cols);
+    std::vector<Vector3f> recordCoeffs = sample(inpainting, mask, directions, normals, sampledColors, rows, cols);
     m_solve = 0;
 
+    if(desiredColors.size() == 0){
+        return recordCoeffs;
+    }
     int maskInd = 0;
     // define desired lighting
     std::vector<int> changedPixels;

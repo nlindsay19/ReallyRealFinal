@@ -5,6 +5,11 @@
 #include "retexture.h"
 #include "histogram.h"
 #include "causticmaker.h"
+#include <QProcess>
+#include <QProcessEnvironment>
+#include <iostream>
+#include <fstream>
+
 MaterialManager::MaterialManager()
 {
 
@@ -186,7 +191,7 @@ bool MaterialManager::changeLighting(){
     if(!areBrdfParamsValid()){
         return false;
     }
-    br.m_diffuse = Vector3f(1.0f,1.0f,1.0f);
+    br.m_diffuse = Vector3f(0.5f,0.5f,0.5f);
     br.m_specular = Vector3f(0.5f,0.5f,0.5f);
 
     std::vector<Vector3f> replaced = br.paintEnvMap(inpainting, mask.toVector(), normals, rows, cols, materialParams.desiredColors, materialParams.highlight);
@@ -406,10 +411,31 @@ bool MaterialManager::makeCaustic(){
     }
     vectorToFile(retexturing, "images/glass.png", rows, cols);
 
-    ImageReader c("images/mug_caustic.png");
 
-    CausticMaker cm(c.toVector(), retexturing, rows, cols);
-    std::vector<Vector3f> caustic = cm.project(102,185,200,200,49,275,2,195);
+
+    std::cout << "creating python environment" << std::endl;
+    QProcess p;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("PYTHONPATH", "/Users/purvigoel/anaconda3/lib/python3.6/site-packages");
+    QStringList params;
+    params << "target_caustic_inverse.py" << materialParams.mainImageFile << materialParams.maskFile <<  ">>" << "log_caustic.txt";
+    p.setStandardOutputFile("log.txt");
+    p.start("/Users/purvigoel/anaconda3/bin/python", params);
+    p.waitForFinished(-1);
+
+    std::cout << "Solved caustic" << std::endl;
+
+    //ImageReader c("images/caustic.png");
+    std::ifstream infile("caustic_data.txt");
+    std::string str;
+    std::vector<Vector3f> c;
+    while (std::getline(infile, str))
+    {
+        c.push_back(Vector3f(std::stof(str),std::stof(str),std::stof(str)));
+    }
+
+    CausticMaker cm(c, retexturing, rows, cols);
+    std::vector<Vector3f> caustic = cm.project(0,0,50,0,50,50,0,50);
 
     vectorToFile(caustic, "images/output.png", rows, cols);
     return true;
