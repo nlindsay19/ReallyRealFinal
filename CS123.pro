@@ -8,8 +8,8 @@ TEMPLATE = app
 QMAKE_CXXFLAGS += -std=c++14
 CONFIG += c++14
 
-QMAKE_LFLAGS += -stdlib=libc++
-QMAKE_CXXFLAGS += -stdlib=libc++
+#QMAKE_LFLAGS += -stdlib=libc++
+#QMAKE_CXXFLAGS += -stdlib=libc++
 
 unix:!macx {
     LIBS += -lGLU
