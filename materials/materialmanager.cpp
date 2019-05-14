@@ -191,8 +191,8 @@ bool MaterialManager::changeLighting(){
     if(!areBrdfParamsValid()){
         return false;
     }
-    br.m_diffuse = Vector3f(0.5f,0.5f,0.5f);
-    br.m_specular = Vector3f(0.5f,0.5f,0.5f);
+    br.m_diffuse = Vector3f(0.0f,0.0f,0.0f);
+    br.m_specular = Vector3f(1.0f,1.0f,1.0f);
 
     std::vector<Vector3f> replaced = br.paintEnvMap(inpainting, mask.toVector(), normals, rows, cols, materialParams.desiredColors, materialParams.highlight);
     materialResults.image = replaced;

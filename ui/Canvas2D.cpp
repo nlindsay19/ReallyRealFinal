@@ -103,7 +103,7 @@ void Canvas2D::mouseDragged(int x, int y) {
         }
     }
     else if(settings.transformationType == TRANSFORMATION_GLASS){
-        if(m_drawnColors.size() == 0){
+        if(m_highlightColors.size() == 0){
             for(int i = 0; i < m_image->height(); i++){
                 for(int j = 0; j < m_image->width(); j++){
                     m_highlightColors.push_back(Eigen::Vector3f(0,0,0));
