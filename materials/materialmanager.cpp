@@ -201,7 +201,7 @@ bool MaterialManager::changeLighting(){
     materialResults.specularDirs = br.specularDirs;
     materialResults.rows = rows;
     materialResults.cols = cols;
-    br.addHighlightsToEnvmap(replaced, mask.toVector(), normals, rows, cols, materialParams.highlightColors, materialParams.highlight);
+    br.addHighlightsToEnvmap(replaced, mask.toVector(), normals, rows, cols, materialParams.highlightColors, materialParams.highlight, materialParams.s * 2.0f);
 
     vectorToFile(replaced, "images/output.png", rows, cols);
 
@@ -331,17 +331,27 @@ bool MaterialManager::makeGlass(){
     std::vector<Vector3f> retexturing;
     retextureObj.calculate(blurred, inpainting, im.toVector(), gradientX, gradientY, retexturing, mask);
 
+    materialResults.image = retexturing;
+    materialResults.mask = mask.toVector();
+    materialResults.normals = normals;
+    materialResults.rows = rows;
+    materialResults.cols = cols;
+
+    BrdfReplacement br;
+    br.replaceBrdf(retexturing, mask.toVector(), normals, rows, cols);
+    materialResults.specularDirs = br.specularDirs;
+
     Histogram hist(se.getLuminances());
     std::vector<int> highlights = hist.findHighlights();
 
     std::vector<Vector3f> originalImage = im.toVector();
-    std::cout << "after im to vector" << std::endl;
-//    for (int i = 0; i < highlights.size(); i++) {
-//        int index = highlights[i];
-//        Vector3f originalVal = originalImage[index];
-//        int gray = (int(originalVal[0]) + int(originalVal[1]) + int(originalVal[2]))/3;
-//        retexturing[index] = Vector3f(gray, gray, gray);
-//    }
+    \
+    for (int i = 0; i < highlights.size(); i++) {
+        int index = highlights[i];
+        Vector3f originalVal = originalImage[index];
+        int gray = (int(originalVal[0]) + int(originalVal[1]) + int(originalVal[2]))/3;
+        retexturing[index] = Vector3f(gray, gray, gray);
+    }
     vectorToFile(retexturing, "images/output.png", rows, cols);
     std::cout << "after vector to file" << std::endl;
 

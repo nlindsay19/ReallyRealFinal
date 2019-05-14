@@ -286,7 +286,7 @@ void MainWindow::transformPressed() {
         QMessageBox::critical(this, "Error", "Could not load image");
     }
 
-    if(settings.transformationType == TRANSFORMATION_LIGHTING){
+    if(settings.transformationType == TRANSFORMATION_LIGHTING || settings.transformationType == TRANSFORMATION_GLASS){
         ui->canvas2D->envmapImage = mm.materialResults.image;
         ui->canvas2D->envmapNormals = mm.materialResults.normals;
         ui->canvas2D->envmapMask = mm.materialResults.mask;

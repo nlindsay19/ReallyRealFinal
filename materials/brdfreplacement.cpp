@@ -154,7 +154,7 @@ std::vector<Vector3f> BrdfReplacement::sample(std::vector<Vector3f> inpainting, 
     return brdfReplacement;
 }
 
-void BrdfReplacement::sampleSpecular(std::vector<Vector3f> &image, std::vector<Vector3f> mask, std::vector<Vector3f> normals,int rows, int cols, std::vector<Vector3f> highlights, std::vector<Vector3f> lightColors){
+void BrdfReplacement::sampleSpecular(std::vector<Vector3f> &image, std::vector<Vector3f> mask, std::vector<Vector3f> normals,int rows, int cols, std::vector<Vector3f> highlights, std::vector<Vector3f> lightColors, float shiny){
     int indexCounter = 0;
     float xC = float(cols)/2;
     float yC = float(rows)/2;
@@ -172,9 +172,9 @@ void BrdfReplacement::sampleSpecular(std::vector<Vector3f> &image, std::vector<V
 
                        Vector3f refl = (lightDir) - 2 * (objectNormal.dot(lightDir)) * objectNormal;
                        refl = -refl.normalized();
-                       intensity[0] += pow(V.dot(refl), 50);
-                       intensity[1] += pow(V.dot(refl), 50);
-                       intensity[2] += pow(V.dot(refl), 50);
+                       intensity[0] += pow(V.dot(refl), shiny);
+                       intensity[1] += pow(V.dot(refl), shiny);
+                       intensity[2] += pow(V.dot(refl), shiny);
                 }
                 intensity[0] *= lightColors[light][0] / 255.0f;
                 intensity[1] *= lightColors[light][1] / 255.0f;
@@ -313,13 +313,13 @@ std::vector<Vector3f> BrdfReplacement::paintEnvMap(std::vector<Vector3f> inpaint
     return image;
 }
 
-void BrdfReplacement::addHighlightsToEnvmap(std::vector<Vector3f> &image, std::vector<Vector3f> mask, std::vector<Vector3f> normals, int rows, int cols, std::vector<Vector3f> desiredColors, Vector2f highlight){
+void BrdfReplacement::addHighlightsToEnvmap(std::vector<Vector3f> &image, std::vector<Vector3f> mask, std::vector<Vector3f> normals, int rows, int cols, std::vector<Vector3f> desiredColors, Vector2f highlight, float shiny){
     std::vector<Vector3f> highlights;
     std::vector<Vector3f> lightColors;
     if(highlight[0] >= 0 && highlight[1] >= 0){
         highlights.push_back(specularDirs[highlight[1] * cols + highlight[0]].normalized()); // light direction
         lightColors.push_back(desiredColors[highlight[1] * cols + highlight[0]]);
-        sampleSpecular(image, mask, normals,rows,cols, highlights, lightColors);
+        sampleSpecular(image, mask, normals,rows,cols, highlights, lightColors, shiny);
     }
 }
 

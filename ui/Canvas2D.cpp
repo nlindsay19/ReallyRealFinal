@@ -90,7 +90,38 @@ void Canvas2D::mouseDragged(int x, int y) {
                     BrdfReplacement br;
                     br.specularDirs = envmapSpecularDirs;
                     std::vector<Eigen::Vector3f> copyImage = envmapImage;
-                    br.addHighlightsToEnvmap(envmapImage, envmapMask, envmapNormals, envmapRows, envmapCols, m_highlightColors, highlight);
+                    br.addHighlightsToEnvmap(envmapImage, envmapMask, envmapNormals, envmapRows, envmapCols, m_highlightColors, highlight, settings.sValue * 2.0f);
+                    MaterialManager mm;
+                    mm.vectorToFile(envmapImage, "images/output.png", envmapRows, envmapCols);
+                    envmapImage = copyImage;
+                    if (!loadImage("images/output.png")) {
+                        std::cout << "couldn't load image" << std::endl;
+                    }
+
+                }
+            }
+        }
+    }
+    else if(settings.transformationType == TRANSFORMATION_GLASS){
+        if(m_drawnColors.size() == 0){
+            for(int i = 0; i < m_image->height(); i++){
+                for(int j = 0; j < m_image->width(); j++){
+                    m_highlightColors.push_back(Eigen::Vector3f(0,0,0));
+                }
+            }
+        }
+        if(m_hDown){
+            if(y < m_image->height() && x < m_image->width() && y > 0 && x > 0){
+                int index = y * m_image->width() + x;
+                m_highlightColors[index] = Eigen::Vector3f((float)settings.specularColor.r, (float)settings.specularColor.g, (float)settings.specularColor.b);
+                m_image->setPixelColor(x, y, QColor(settings.specularColor.r, settings.specularColor.g, settings.specularColor.b));
+                highlight = Eigen::Vector2f(x,y);
+                if(envmapRows > 0){
+                    BrdfReplacement br;
+                    br.specularDirs = envmapSpecularDirs;
+                    std::vector<Eigen::Vector3f> copyImage = envmapImage;
+
+                    br.addHighlightsToEnvmap(envmapImage, envmapMask, envmapNormals, envmapRows, envmapCols, m_highlightColors, highlight, settings.sValue * 2.0f);
                     MaterialManager mm;
                     mm.vectorToFile(envmapImage, "images/output.png", envmapRows, envmapCols);
                     envmapImage = copyImage;
