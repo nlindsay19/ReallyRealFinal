@@ -13,6 +13,8 @@ public:
     float findSlope(int bin);
     float findLowestSlope();
     std::vector<int> findHighlights();
+    std::vector<float> getHighlightsMaxAndMin();
+    float findPeakHistogramValue();
 
 private:
     std::vector<float> m_luminances;

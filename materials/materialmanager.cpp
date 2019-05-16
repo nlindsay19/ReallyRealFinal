@@ -9,6 +9,7 @@
 #include <QProcessEnvironment>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 MaterialManager::MaterialManager()
 {
@@ -33,6 +34,9 @@ bool MaterialManager::transformMaterial(){
     }
     if(materialParams.makeMaterial == LIGHTING){
         return changeLighting();
+    }
+    if(materialParams.makeMaterial == GLOSSY) {
+        return makeGlossy(1);
     }
 }
 
@@ -449,4 +453,91 @@ bool MaterialManager::makeCaustic(){
 
     vectorToFile(caustic, "images/output.png", rows, cols);
     return true;
+}
+
+bool MaterialManager::makeGlossy(int specular)
+{
+    std::cout<<"Before estimate shape"<<std::endl;
+    ImageReader im(materialParams.mainImageFile);
+    ImageReader mask(materialParams.maskFile);
+
+    int cols = im.getImageWidth();
+    int rows = im.getImageHeight();
+
+    ShapeEstimation se;
+
+    if(!areShapeEstimationParamsValid()){
+        return false;
+    }
+
+    std::vector<float> depth;
+    std::vector<Eigen::Vector3f> normals;
+    std::vector<float> gradientX;
+    std::vector<float> gradientY;
+
+    if(!areShapeEstimationParamsValid()){
+        return false;
+    }
+
+    se.m_bilateralSmoothing = materialParams.bilateralSmoothing;
+    se.m_curvature = materialParams.curvature;
+
+
+    se.estimateShape(im,mask, depth, normals, gradientX, gradientY);
+    std::cout<<"Before get luminances"<<std::endl;
+    Histogram hist(se.getLuminances());
+    std::vector<float> highlights = hist.getHighlightsMaxAndMin();
+    float min = highlights[0]*100.f;
+    std::cout<< "Min highlights is: " << min <<std::endl;
+    float max = highlights[1]*100.f;
+    std::cout<< "Max highlights is: " << max << std::endl;
+    float hMax = hist.findPeakHistogramValue();
+
+    std::vector<Vector3f> originalImage = im.toVector();
+    float alpha = 0.5;
+    float beta = 20.f;
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (QColor(mask.pixelAt(i, j)).red() > 150) {
+                // In the object
+                QColor pix = QColor(im.pixelAt(i, j));
+                int index = im.indexAt(i, j);
+                float lum = pix.red()*0.2126 + pix.green()*0.7152 + pix.blue()*0.0722;
+
+                if (lum > min) {
+                    // Calculate new luminance
+                    if (specular) {
+                        // Make more specular
+                        beta = 20.f;
+                        float partial = pow(alpha * ((lum - min) / (max - min)), beta);
+                        float newlum = min + (max - min) * partial;
+                        float ratio = (newlum/lum);
+                        if (ratio > 1.3) {
+                            ratio = 1.3f;
+                        }
+                        if (newlum > lum) {
+                            std::cout<<"Ratio is: " << ratio << std::endl;
+                        }
+
+                        originalImage[index] = ratio*originalImage[index];
+                    } else {
+                        // Make more diffuse
+                        beta = 0.05;
+                        float partial = pow(((lum - hMax) / (max - hMax)), beta);
+                        float newlum = hMax + (min - hMax) * partial;
+                        originalImage[index] = ((1+(newlum/lum))/2.f)*originalImage[index];
+                    }
+
+                }
+            }
+        }
+    }
+
+    vectorToFile(originalImage, "images/output.png", rows, cols);
+    std::cout << "after vector to file" << std::endl;
+
+    return true;
+
+
 }
